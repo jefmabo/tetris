@@ -1,14 +1,21 @@
 using Assets.Scripts;
+using System;
 using TMPro;
+using UnityEditor.SearchService;
 using UnityEditorInternal.VersionControl;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class GameController : MonoBehaviour
 {
     public static int Rows = 20; // ALTURA
     public static int Columns = 10; // LARGURA
     public int Score = 0;
+    public int Level = 1;
     public TMP_Text TextScore;
+    public TMP_Text TextLevel;
+    public TMP_Text TextHiScore;
+
     public int DifficultyPoint;
     public float Difficulty = 1;
     public GameObject GameOver;
@@ -113,6 +120,8 @@ public class GameController : MonoBehaviour
         {
             DifficultyPoint -= 1000;
             Difficulty += 0.5f;
+            Level++;
+            TextLevel.text = Level.ToString().PadLeft(2, '0');
         }
         else
         {
@@ -153,6 +162,24 @@ public class GameController : MonoBehaviour
 
     public void ShowGameOver()
     {
+        int hiScore = PlayerPrefs.GetInt("hiScore");
+        if (hiScore < Score)
+            PlayerPrefs.SetInt("hiScore", Score);
+
+        TextHiScore.text = hiScore.ToString().PadLeft(7, '0');
         GameOver.SetActive(true);
+        Time.timeScale = 0;
+    }
+
+    public void RestartGame()
+    {
+        Time.timeScale = 1;
+        SceneManager.LoadScene("Level 1");
+    }
+
+    internal void CalcHiScore()
+    {
+        int hiScore = PlayerPrefs.GetInt("hiScore");
+        TextHiScore.text = hiScore.ToString().PadLeft(7, '0');
     }
 }

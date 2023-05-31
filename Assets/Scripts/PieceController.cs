@@ -19,8 +19,9 @@ public class PieceController : MonoBehaviour
     void Start()
     {
         controller = FindObjectOfType<GameController>();
-        Timer = Speed;
         spawner = FindAnyObjectByType<Spawner>();
+        Timer = Speed;
+        controller.CalcHiScore();
     }
 
     void Update()
