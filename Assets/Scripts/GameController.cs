@@ -1,5 +1,6 @@
 using Assets.Scripts;
 using TMPro;
+using UnityEditorInternal.VersionControl;
 using UnityEngine;
 
 public class GameController : MonoBehaviour
@@ -8,6 +9,9 @@ public class GameController : MonoBehaviour
     public static int Columns = 10; // LARGURA
     public int Score = 0;
     public TMP_Text TextScore;
+    public int DifficultyPoint;
+    public float Difficulty = 1;
+    public GameObject GameOver;
 
     public static Transform[,] grid = new Transform[Columns, Rows];
 
@@ -104,13 +108,23 @@ public class GameController : MonoBehaviour
     {
         Score += score;
         TextScore.text = Score.ToString().PadLeft(7, '0');
-    }    
+
+        if (DifficultyPoint > 1000)
+        {
+            DifficultyPoint -= 1000;
+            Difficulty += 0.5f;
+        }
+        else
+        {
+            DifficultyPoint += score;
+        }
+    }
 
     public void RemoveLine()
     {
-        for(int row = 0; row < Rows; row++)
+        for (int row = 0; row < Rows; row++)
         {
-            if(LineIsFull(row))
+            if (LineIsFull(row))
             {
                 RemoveBlock(row);
                 MoveAllLinesDown(row + 1);
@@ -118,5 +132,27 @@ public class GameController : MonoBehaviour
                 SetScore(100);
             }
         }
+    }
+
+    public bool IsGameOver(PieceController blocks)
+    {
+        for (int column = 0; column < Columns; column++)
+        {
+            foreach (Transform block in blocks.transform)
+            {
+                Vector2 position = Round(block.position);
+                if (position.y > Rows - 1)
+                {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    public void ShowGameOver()
+    {
+        GameOver.SetActive(true);
     }
 }

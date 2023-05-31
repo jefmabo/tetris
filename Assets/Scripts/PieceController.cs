@@ -23,7 +23,6 @@ public class PieceController : MonoBehaviour
         spawner = FindAnyObjectByType<Spawner>();
     }
 
-    // Update is called once per frame
     void Update()
     {
         RefreshTimer();
@@ -86,7 +85,7 @@ public class PieceController : MonoBehaviour
                 controller.RemoveLine();
                 enabled = false;
                 controller.SetScore(10);
-                spawner.NextPiece();
+                spawner.ShowNextPiece();
             }
         }
 
@@ -95,7 +94,7 @@ public class PieceController : MonoBehaviour
 
     private void MoveDownAutomatically()
     {
-        if (Time.time - Fall >= 1 && !Input.GetKey(KeyCode.DownArrow))
+        if (Time.time - Fall >= (1 / controller.Difficulty) && !Input.GetKey(KeyCode.DownArrow))
         {
             transform.position += new Vector3(0, -1, 0);
 
@@ -109,7 +108,13 @@ public class PieceController : MonoBehaviour
                 controller.RemoveLine();
                 enabled = false;
                 controller.SetScore(10);
-                spawner.NextPiece();
+
+                if(controller.IsGameOver(this))
+                {
+                    controller.ShowGameOver();
+                }
+
+                spawner.ShowNextPiece();
             }
 
             Fall = Time.time;
@@ -178,4 +183,5 @@ public class PieceController : MonoBehaviour
 
         return true;
     }
+
 }
